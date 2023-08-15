@@ -7,7 +7,6 @@ const getAccessToRoute = (req,res,next) => {
   const {JWT_SECRET_KEY} = process.env
   if(!isTokenIncluded(req)) {
     //401: unauthorized: giriş yapmadan bi sayfaya ulaşım, 403: forbidden ulaşılmasına izin olmayan bir sayfaya ulaşım
-    console.log("haha");
     return next(new CustomError("You are not authorized to access this route."),401)
   }
   const accessToken = getAccessTokenFromHeader(req)
@@ -15,9 +14,12 @@ const getAccessToRoute = (req,res,next) => {
     if(err) {
       return next(new CustomError("You are not authorized to access this route",401));
     }
-    console.log(decoded);
-    next();
 
+    req.user = {
+      id: decoded.id,
+      name: decoded.name
+    }
+    next();
   })
 }
 module.exports = {

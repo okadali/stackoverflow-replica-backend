@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const Schema = mongoose.Schema
 const jwt = require("jsonwebtoken")
 const crypto = require('crypto')
+const CustomError = require('../helpers/error/CustomError')
 
 const UserSchema = new Schema({
   name: {

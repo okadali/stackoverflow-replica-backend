@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const Schema = mongoose.Schema
 const jwt = require("jsonwebtoken")
 const crypto = require('crypto')
+const Question = require('./Question')
 const CustomError = require('../helpers/error/CustomError')
 
 const UserSchema = new Schema({
@@ -101,6 +102,14 @@ UserSchema.pre("save",function(next) {
       next();
     });
   });
+})
+
+// Post Hooks
+UserSchema.post("deleteOne",async function() {
+  console.log(this._conditions._id);
+  await Question.deleteMany({
+    user: this._conditions._id
+  })
 })
 
 module.exports = mongoose.model("User",UserSchema);

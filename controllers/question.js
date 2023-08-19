@@ -17,25 +17,14 @@ const askNewQuestion = asyncErrorWrapper(async (req,res,next) => {
   })
 });
 
-const getAllQuestions = asyncErrorWrapper(async (req,res,next) => {
-  const questions = await  Question.find();
-  
+const getAllQuestions = asyncErrorWrapper(async (req,res,next) => {  
   return res.status(200)
-  .json({
-    success: true,
-    data:questions
-  })
+  .json(res.queryResults)
 })
 
 const getSingleQuestion = asyncErrorWrapper(async (req,res,next) => {
-  const {id} = req.params;
-  const question = await  Question.findById(id);
-  
   return res.status(200)
-  .json({
-    success: true,
-    data:question
-  })
+  .json(res.queryResults);
 })
 
 const editQuestion = asyncErrorWrapper(async (req,res,next) => {
@@ -78,6 +67,7 @@ const likeQuestion = asyncErrorWrapper(async (req,res,next) => {
     return next(new CustomError("You already liked this question",400));
   }
   question.likes.push(req.user.id);
+  questions.likeCount = question.likes.length;
   await question.save();
 
   return res.status(200)
@@ -96,7 +86,10 @@ const undoLikeQuestion = asyncErrorWrapper(async (req,res,next) => {
     return next(new CustomError("You Didn't liked this question",400));
   }
   const index= question.likes.indexOf(req.user.id);
+
   question.likes.splice(index,1);
+  question.likeCount = question.likes.length;
+
   await question.save();
 
   return res.status(200)
